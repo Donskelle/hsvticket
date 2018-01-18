@@ -1,3 +1,4 @@
 www/public
 node_modules
 package-lock.json
+._babelrc
