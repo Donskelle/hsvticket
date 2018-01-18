@@ -99,6 +99,6 @@ function foundPrice() {
 
 function delayedScanMatch(title, url, delay = 8000) {
   window.setTimeout(function() {
-    scanMatch(title, url);
+    scanMatch(title, url)
   }, delay);
 }

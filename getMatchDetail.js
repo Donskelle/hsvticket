@@ -9,12 +9,10 @@ const {
 
 module.exports = {
   getMatch: (_url) => {
-
     const options = {
       method: 'GET',
       uri: _url
     };
-
 
     return new Promise((resolve, reject) => {
       request(options, function(error, response, body) {
@@ -47,13 +45,6 @@ module.exports = {
           return 0;
         })
 
-        /*let minPrice = avaibleData.reduce((prev,curr) => {
-            return prev.fullPrice < curr.fullPrice ? prev : curr;
-        })*/
-
-        console.log("avaible")
-        console.log(avaibleData)
-
         resolve(avaibleData)
       })
     })
@@ -66,13 +57,8 @@ module.exports = {
 
 
     return new Promise((resolve, reject) => {
-      //setTimeout(() => resolve(url), 2000);
-
       request(options, function(error, response, body) {
         if (error) throw new Error(error);
-
-        //const data = JSON.parse(getStadiumData(body));
-
         const dom = new JSDOM(body);
         let matches = [...dom.window.document.querySelectorAll('.product--box.hsv-ticket')].map(ele => {
           return {
@@ -86,8 +72,6 @@ module.exports = {
     })
   }
 }
-
-
 
 
 function getStadiumData(body) {

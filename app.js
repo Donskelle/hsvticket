@@ -27,7 +27,7 @@ app.use(basicAuth({
 
 
 app.get('/', (req, res) => {
-  res.sendFile('index.html', { root: __dirname });
+  res.sendFile('www/public/index.html', { root: __dirname });
 });
 
 
@@ -39,8 +39,6 @@ app.get('/matches', (req, res) => {
 });
 
 app.post('/matches', (req, res) => {
-  console.log("req.")
-  console.dir(req)
   handleMatch(req.body.url, res)
     .catch(e => {
       console.log(e)
