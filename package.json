@@ -1,17 +1,18 @@
 {
   "name": "ticket",
-  "description": "",
+  "description": "Scan Tickets",
   "engines": {
     "node": ">=4.3.2"
   },
   "scripts": {
     "deploy": "gcloud app deploy",
-    "start": "nodemon",
-    "babel": "cross-env NODE_ENV=dev babel www/js -w --out-file www/public/bundle.js",
-    "build": "cross-env NODE_ENV=production babel www/js --out-file www/public/bundle.js"
+    "start": "node app.js",
+    "watch": "babel www/js -w --out-file www/public/bundle.js",
+    "build": "babel www/js --out-file www/public/bundle.js"
   },
   "dependencies": {
     "babel-plugin-minify-mangle-names": "^0.2.0",
+    "babel-plugin-transform-remove-console": "^6.8.5",
     "babel-preset-es2015": "^6.24.1",
     "body-parser": "^1.18.2",
     "express": "4.15.4",
@@ -20,9 +21,9 @@
   },
   "version": "1.0.0",
   "main": "app.js",
-  "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/preset-env": "^7.0.0-beta.38",
     "babel-cli": "^6.26.0",
     "babel-minify": "^0.2.0",
     "babel-preset-env": "^1.6.1"

@@ -14,6 +14,11 @@
 # [START app_yaml]
 runtime: nodejs
 env: flex
+
 manual_scaling:
   instances: 1
 # [END app_yaml]
+resources:
+    cpu: 1
+    memory_gb: 0.5
+    disk_size_gb: 10

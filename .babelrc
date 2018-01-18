@@ -1,8 +1,4 @@
 {
-  "presets": ["es2015"],
-  "env": {
-    "production": {
-      "presets": ["minify"]
-    }
-  }
+  "presets": ["env","minify"],
+  "plugins": ["babel-plugin-transform-remove-console"]
 }

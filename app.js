@@ -1,10 +1,7 @@
 'use strict';
-
-// [START app]
 const express = require('express');
 const bodyParser = require('body-parser')
-const match = require('./getMatchDetail.js');
-const basicAuth = require('express-basic-auth')
+const match = require('./matchFunctions.js');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -16,30 +13,34 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(bodyParser.json())
 app.use(express.static('www/public'))
+
+/*const basicAuth = require('express-basic-auth')
 app.use(basicAuth({
-    users: {
-        'hsv': 'fan'
-    },
-    challenge: true
-}))
+  users: {
+    'hsv': 'fan'
+  },
+  challenge: true
+}))*/
 
 
 
 
 app.get('/', (req, res) => {
-  res.sendFile('www/public/index.html', { root: __dirname });
+  res.sendFile('www/public/index.html', {
+    root: __dirname
+  });
 });
 
 
 app.get('/matches', (req, res) => {
   handleGetMatches(res)
-  .catch(e => {
-    console.log(e)
-  })
+    .catch(e => {
+      console.log(e)
+    })
 });
 
-app.post('/matches', (req, res) => {
-  handleMatch(req.body.url, res)
+app.get('/match/:uid', (req, res) => {
+  handleMatch(decodeURIComponent(req.params.uid), res)
     .catch(e => {
       console.log(e)
     })
@@ -50,11 +51,18 @@ app.listen(PORT, () => {
 });
 
 async function handleMatch(url, res) {
-  console.log("url", url)
-  let data = await match.getMatch(url)
-  res.send(data)
+  try {
+    let data = await match.getMatch(url)
+    res.send(data)
+  } catch (e) {
+    res.send([])
+  }
 }
 async function handleGetMatches(res) {
-  let possibleMatches = await match.getMatches()
-  res.send(possibleMatches)
+  try {
+    let possibleMatches = await match.getMatches()
+    res.send(possibleMatches)
+  } catch (e) {
+    res.send([])
+  }
 }

@@ -1,26 +1,29 @@
 let searchPrice,
   blockResponse = [],
   searchFound = false;
-const requestUrl = '/matches'
+const requestMatches = '/matches'
+const requestMatchUrl = '/match/'
 const head = document.querySelector('.head')
 const body = document.querySelector('.body')
-const sound = document.querySelector('.sound')
+
+const opt = {
+  credentials: 'include'
+}
+
 
 showUpcommingMatches()
-
 
 
 function showUpcommingMatches() {
   body.innerHTML = 'Get upcomming matches'
 
-  fetch(requestUrl, {
-      credentials: 'include'
-    })
+  fetch(requestMatches, opt)
     .then(function(response) {
       return response.json()
     }).then(function(data) {
       body.innerHTML = buildGameLinks(data)
       initMatchClicks(scanMatch)
+      console.log(data)
     }).catch(function(e) {
       console.log(e)
     });
@@ -28,47 +31,38 @@ function showUpcommingMatches() {
 
 function scanMatch(title, url) {
   head.innerHTML = title
-  if (!Number.isInteger(searchPrice))
-    body.innerHTML = '<a href="#" onclick="addAlert()">Add Alert!</a>' + addLoader()
-  else
-    body.innerHTML = `Looking for ${searchPrice}€ <small><a href="#" onclick="addAlert()">change</a></small><br>` + addLoader()
+  body.innerHTML = '<p class="alertHeader"></p>'
+  body.innerHTML += '<div class="blocks">' + addLoader() + '</div>'
 
+  updateAlertHeader()
+  fetchMatch(url)
+}
 
-  const opt = {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      url: url
-    })
-  }
-
-  fetch(requestUrl, opt)
+function fetchMatch(url) {
+  document.querySelector(".blocks").innerHTML = addLoader()
+  fetch(requestMatchUrl + encodeURIComponent(url), opt)
     .then(function(response) {
       return response.json()
     }).then(function(blocks) {
       blockResponse = blocks
-      body.innerHTML += showSeats(blocks)
+      document.querySelector(".blocks").innerHTML = showSeats(blocks)
       document.querySelector(".loading").remove()
 
       checkPrice()
-      delayedScanMatch(title, url)
+      delayedScanMatch(url)
     }).catch(function(e) {
       console.log(e)
-      delayedScanMatch(title, url)
+      delayedScanMatch(url)
     })
 }
 
 
-
 function addAlert() {
-  searchPrice = parseInt(prompt('Price to look for'))
+  searchPrice = parseInt(prompt('Enter Price to look for'))
   if (!Number.isInteger(searchPrice)) {
     alert("Not Valid")
   } else {
+    updateAlertHeader()
     checkPrice()
   }
 }
@@ -76,20 +70,20 @@ function addAlert() {
 function checkPrice() {
   // already found check if still avaible
   if (searchFound) {
-    if (!foundPrice()) {
+    if (!foundSearchedPrice()) {
       searchFound = false
-      sound.innerHTML = ""
+      whop.pause()
     }
-  } else if (foundPrice()) {
-    sound.innerHTML += addSound()
+  } else if (foundSearchedPrice()) {
+    searchFound = true
+    whop.play()
   }
 }
 
-function foundPrice() {
+function foundSearchedPrice() {
   if (Number.isInteger(searchPrice)) {
     if (blockResponse.length >= 1) {
       if (blockResponse[0].price <= searchPrice) {
-        searchFound = true
         return true
       }
     }
@@ -97,8 +91,16 @@ function foundPrice() {
   return false
 }
 
-function delayedScanMatch(title, url, delay = 8000) {
+function delayedScanMatch(url, delay = 11000) {
   window.setTimeout(function() {
-    scanMatch(title, url)
+    fetchMatch(url)
   }, delay);
+}
+
+function updateAlertHeader() {
+  const alertHead = document.querySelector('.alertHeader')
+  if (!Number.isInteger(searchPrice))
+    alertHead.innerHTML = '<a href="#" onclick="addAlert()">Add Alert!</a>'
+  else
+    alertHead.innerHTML = `Looking for ${searchPrice}€ <small><a href="#" onclick="addAlert()">change</a></small>`
 }
