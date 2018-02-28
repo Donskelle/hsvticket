@@ -8,9 +8,9 @@ npm install
 ## Deploy
 Start server via:
 ```
-npm run-script start
+npm start
 ```
 To rebuild bundle.js on save run:
 ```
-npm run-script watch
+npm run watch
 ```
